@@ -9,4 +9,5 @@ Route::group(['middleware' => 'auth'], function() {
     Route::get('singeries', 'FrontController@recruits');
     Route::post('singeries', 'FrontController@addRecruits');
     Route::get('ressources', 'FrontController@resources');
+    Route::post('ressources', 'FrontController@setResources');
 });

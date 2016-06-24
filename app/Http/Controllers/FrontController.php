@@ -88,7 +88,29 @@ class FrontController extends Controller
         $user = Auth::user();
         $fields = Field::where('user_id', $user->id)->first();
 
-        return view('front.resources', compact('fields'));
+        return view('front.resources', compact('fields', 'user'));
+    }
+
+    public function setResources(Request $request)
+    {
+        $user = Auth::user();
+        $peon = Unit_user::where(['user_id' => $user->id, 'unit_id' => 1])->first();
+
+        $peon = $peon ? $peon->units : 0;
+
+        $fields = Field::where('user_id', $user->id)->first();
+
+        if ($request->get('units') > $peon)
+            return back()->with('error', 'Vous n\'avez pas autant d\'ouvrier dans votre armée !');
+
+        if ($request->get('units') > $fields->fields)
+            return back()->with('error', 'Vous ne pouvez pas avoir plus d\'ouvrier que de km² de territoire !');
+
+        $fields->units = $request->get('units');
+        $fields->touch();
+
+        return back()->with('success', 'Vos ouvriers ont été réattribué à la tache !');
+
     }
 
     public function field()

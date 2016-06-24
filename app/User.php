@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 class User extends Authenticatable
@@ -46,6 +47,14 @@ class User extends Authenticatable
     public function field()
     {
         return $this->hasOne('App\Field');
+    }
+
+    public function lastIncome()
+    {
+        $lastIncome = $this->lastIncome;
+        $newIncome = $lastIncome->addHour(1);
+
+        return $newIncome;
     }
 
 }
