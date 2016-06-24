@@ -24,7 +24,9 @@ class Controller extends BaseController
 
         if (Auth::check()) {
             $user = Auth::user();
-            View::composer('partials.info', function ($view) {
+            $user->getIncome();
+
+            View::composer('*', function ($view) {
                 $user = Auth::user();
                 if ($peons = Unit_user::where(['unit_id' => 1, 'user_id' => $user->id])->first())
                     $peons = $peons->units;
@@ -34,28 +36,18 @@ class Controller extends BaseController
                 $view->with(compact('user', 'peons'));
             });
 
-            $now = Carbon::now();
-            $lastIncome = $user->lastIncome;
-            $hours = $now->diffInHours($lastIncome);
-            if ($hours >= 1) {
-                $user->lastIncome = $lastIncome->addHour($hours);
-                $user->bananas += round($user->field->fields / 10) * $hours;
-                $user->touch();
-            }
+            foreach (Recruit_user::where('user_id', $user->id)->get() as $recruit) {
+                if (Carbon::now() >= $recruit->finished_at) {
+                    $newUnit = Unit_user::firstOrCreate([
+                        'unit_id' => $recruit->unit_id,
+                        'user_id' => $recruit->user_id,
+                    ]);
 
-        }
-        foreach (Recruit_user::all() as $recruit) {
-            if (Carbon::now() >= $recruit->finished_at) {
-                $newUnit = Unit_user::firstOrCreate([
-                    'unit_id' => $recruit->unit_id,
-                    'user_id' => $recruit->user_id,
-                ]);
-
-                $newUnit->units = $newUnit->units + $recruit->units;
-                $newUnit->touch();
-                $recruit->delete();
+                    $newUnit->units = $newUnit->units + $recruit->units;
+                    $newUnit->touch();
+                    $recruit->delete();
+                }
             }
         }
-
     }
 }

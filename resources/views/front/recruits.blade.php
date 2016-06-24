@@ -18,10 +18,11 @@
             </script>
             @foreach($recruits as $index => $recruit)
                 <div class="recruit">
-                    {{ $recruit->units }} {{ $recruit->unit->name() }} | Temps requis : {{ $recruit->requireTime() }} | Temps restant : <span class="timespan-{{$index}}"></span>
+                    {{ $recruit->units }} {{ $recruit->unit->name() }} | Temps requis : {{ $recruit->requireTime() }} |
+                    Temps restant : <span class="timespan-{{$index}}"></span>
                 </div>
                 <script>
-                    var endTime = new Date('{{$recruit->finished_at->format('Y/m/d h:i:s')}}');
+                    var endTime = new Date('{{$recruit->finished_at->format('Y/m/d H:i:s')}}');
                     $('.timespan-{{$index}}').countdown(endTime, function (e) {
                         $(this).text(e.strftime('%D %H:%M:%S'));
                     });
@@ -35,7 +36,7 @@
     @endif
 
     <div class="units">
-        @foreach($units as $unit)
+        @foreach($units as $index => $unit)
             <div class="unit">
                 <div class="name">{{ $unit->name() }}</div>
                 @if( $unit->endurance != 0 && $unit->strength != 0 && $unit->agility != 0 )
@@ -53,9 +54,11 @@
                     <form action="" method="post">
                         {{ csrf_field() }}
                         <div class="form-group">
-                            <input type="text" name="number">
+                            <input type="text" name="number" data-bananas="{{ $unit->bananas }}">
                             <input type="hidden" name="unit" value="{{ $unit->id }}">
                             <button>Recruter</button>
+                            <span class="resources"></span>
+
                         </div>
                     </form>
                     @endcan
@@ -65,3 +68,21 @@
         @endforeach
     </div>
 @endsection
+
+@section('scripts')
+    <script>
+        $(document).on('keyup', 'input[name=number]', function () {
+            var
+                    val = $(this).val(),
+                    bananas = $(this).attr('data-bananas'),
+                    $span = $(this).parent().find('.resources');
+            $span.html(bananas * val);
+            if (val > {{ $user->bananas }}) {
+                $span.addClass('error');
+            } else {
+                $span.removeClass('error');
+            }
+
+        });
+    </script>
+@append

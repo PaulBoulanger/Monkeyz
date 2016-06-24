@@ -8,7 +8,7 @@
             <li><a href="#">Maison du primate savant</a></li>
             <li><a href="{{ action('FrontController@resources') }}">Ressources</a></li>
             <li><a href="#">Terrain</a></li>
-            <li><a href="#">Jungle</a></li>
+            <li><a href="{{ action('FrontController@map') }}">Jungle</a></li>
             <li><a href="#">Aide</a></li>
         </ul>
     </div>

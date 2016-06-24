@@ -51,10 +51,25 @@ class User extends Authenticatable
 
     public function lastIncome()
     {
-        $lastIncome = $this->lastIncome;
-        $newIncome = $lastIncome->addHour(1);
+        return $this->lastIncome->addHour(1);
+    }
 
-        return $newIncome;
+    public function income()
+    {
+        return round($this->field->units / 5);
+    }
+
+    public function getIncome()
+    {
+        $now = Carbon::now();
+        $lastIncome = $this->lastIncome;
+        $hours = $now->diffInHours($lastIncome);
+
+        if ($hours >= 1) {
+            $this->lastIncome = $lastIncome->addHour($hours);
+            $this->bananas += $this->income() * $hours;
+            $this->touch();
+        }
     }
 
 }

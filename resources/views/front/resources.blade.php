@@ -13,8 +13,8 @@
     @endif
 
     <p>Votre territoire s'étend à {{ $fields->fields }} km² !</p>
-    <p>Vous avez actuellement {{$fields->units}} ouvrier qui collectents des bananes !</p>
-    <p>Ce qui vous fournis {{ round($fields->units / 10) }} bananes par heure.</p>
+    <p>Vous avez actuellement {{$fields->units}} singes ouvriers qui collectent des bananes !</p>
+    <p>Ce qui vous fournis {{ $user->income() }} bananes par heure.</p>
     <p>Prochain approvisonnement de bananes dans : <span class="timespan"></span></p>
     <script>
         var endTime = new Date('{{ $user->lastIncome() }}');
@@ -22,14 +22,14 @@
             $(this).text(e.strftime('%H:%M:%S'));
         });
         $('.timespan').countdown(endTime).on('finish.countdown', function () {
-            document.refresh();
+            location.reload();
         });
     </script>
 
     <form action="" method="post">
         {{ csrf_field() }}
         <div class="form-group">
-            <label for="">Combien d'ouvrier pour récolter les bananes :</label>
+            <label for="">Combien de singes ouvriers pour récolter les bananes :</label>
             <input type="text" name="units" value="{{ $fields->units }}">
             <button>Attribuer</button>
         </div>

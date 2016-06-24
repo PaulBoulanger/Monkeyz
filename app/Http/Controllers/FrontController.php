@@ -12,6 +12,7 @@ use App\Unit_user;
 use App\Recruit_user;
 use App\Http\Requests;
 use Illuminate\Http\Request;
+use App\Services\FightService;
 use Illuminate\Support\Facades\Auth;
 
 class FrontController extends Controller
@@ -41,7 +42,7 @@ class FrontController extends Controller
         return view('front.recruits', compact('units', 'recruits'));
     }
 
-    public function addRecruits(Request $request)
+    public function addRecruits(Requests\RecruitRequest $request)
     {
         $user = Auth::user();
         $number = $request->get('number');
@@ -120,7 +121,29 @@ class FrontController extends Controller
 
     public function map()
     {
-        return view('front.map');
+        $bases = Base::all();
+
+        return view('front.map', compact('bases'));
+    }
+
+    public function loot(Base $base)
+    {
+        $user = Auth::user();
+        $ennemy = $base->user;
+
+        $myArmy = Unit_user::where('user_id', $user->id)->get();
+        $ennemyArmy = Unit_user::where('user_id', $ennemy->id)->get();
+
+
+        if (count($ennemyArmy) <= 0)
+            return back()->with('error', "Une erreur s'est produite, votre ennemie n'a pas d'armée !");
+
+        if (count($myArmy) <= 0)
+            return back()->with('error', "Une erreur s'est produite, vous n'avez pas d'armée !");
+
+        return FightService::fight($myArmy, $ennemyArmy);
+
+        return back()->with('success', 'Vous lancer votre armée sur le bananier de ' . $base->user->name . ' et tentez de le piller !');
     }
 
     public function help()
