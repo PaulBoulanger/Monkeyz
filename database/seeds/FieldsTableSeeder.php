@@ -14,8 +14,8 @@ class FieldsTableSeeder extends Seeder
         for ($i = 1; $i < 50; $i++) {
             App\Field::create([
                 'user_id' => $i,
-                'fields' => rand(50, 1000),
-                'units' => rand(0, 10000),
+                'fields' => 50,
+                'units' => 0,
             ]);
         }
     }
