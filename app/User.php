@@ -12,7 +12,11 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'bananas',
+        'name', 'email', 'password', 'bananas', 'lastIncome',
+    ];
+
+    protected $dates = [
+        'lastIncome',
     ];
 
     /**
@@ -38,4 +42,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Building');
     }
+
+    public function field()
+    {
+        return $this->hasOne('App\Field');
+    }
+
 }

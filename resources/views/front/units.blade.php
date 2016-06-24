@@ -8,8 +8,8 @@
 
         @foreach($unit_user as $unit)
             <div class="unit">
-                {{ $unit->unit->name }}
                 {{ $unit->units }}
+                {{ $unit->unit->name() }}
             </div>
         @endforeach
 

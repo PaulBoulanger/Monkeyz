@@ -15,7 +15,7 @@ class CreateUnitsTable extends Migration
         Schema::create('units', function (Blueprint $table) {
             $table->engine = 'InnoDB';
             $table->increments('id');
-            $table->string('name');
+            $table->string('type');
             $table->integer('time');
             $table->integer('bananas');
             $table->integer('endurance');
@@ -42,10 +42,19 @@ class CreateUnitsTable extends Migration
             $table->unsignedInteger('unit_id')->nullable();
             $table->unsignedInteger('user_id')->nullable();
             $table->integer('units');
-            $table->timestamp('launched_at');
             $table->timestamp('finished_at');
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('SET NULL');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
+            $table->timestamps();
+        });
+
+        Schema::create('unit_names', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->unsignedInteger('unit_id')->nullable();
+            $table->enum('lang', ['fr', 'en'])->default('fr');
+            $table->string('name');
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('SET NULL');
             $table->timestamps();
         });
     }
@@ -57,6 +66,7 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
+        Schema::drop('unit_names');
         Schema::drop('recruit_user');
         Schema::drop('unit_user');
         Schema::drop('units');

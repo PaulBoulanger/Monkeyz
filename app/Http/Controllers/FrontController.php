@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Field;
 use Gate;
 use App\Base;
 use App\Unit;
@@ -51,14 +52,19 @@ class FrontController extends Controller
         if ($user->bananas < $resource)
             return back()->with('error', 'Vous n\'avez pas assez de bananes pour cet entraînement !');
 
+        $lastRecruit = Recruit_user::where('user_id', $user->id)->orderBy('finished_at', 'DESC')->first();
+
+        if ($lastRecruit)
+            $finishedAt = $lastRecruit->finished_at;
+        else
+            $finishedAt = Carbon::now();
 
         $time = $unit->time * $number;
         Recruit_user::create([
             'user_id' => $user->id,
             'unit_id' => $unit->id,
             'units' => $number,
-            'launched_at' => Carbon::now(),
-            'finished_at' => Carbon::now()->addSeconds($time),
+            'finished_at' => $finishedAt->addSeconds($time),
         ]);
 
         $user->bananas = $user->bananas - $resource;
@@ -79,7 +85,10 @@ class FrontController extends Controller
 
     public function resources()
     {
-        return view('front.resources');
+        $user = Auth::user();
+        $fields = Field::where('user_id', $user->id)->first();
+
+        return view('front.resources', compact('fields'));
     }
 
     public function field()

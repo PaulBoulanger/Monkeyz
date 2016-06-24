@@ -21,4 +21,10 @@ class Recruit_user extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function requireTime()
+    {
+        $minute = ($this->unit->time * $this->units) / 60;
+        return $minute . ' ' . trans_choice('site.minutes', $minute);
+    }
 }

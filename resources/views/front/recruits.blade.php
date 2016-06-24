@@ -13,12 +13,22 @@
 
     @if($recruits)
         <div class="recruits">
-            @foreach($recruits as $recruit)
-
+            <script>
+                var timespan = [];
+            </script>
+            @foreach($recruits as $index => $recruit)
                 <div class="recruit">
-                    {{ $recruit->units }} {{ $recruit->unit->name }}
-                    dans {{ \Carbon\Carbon::now()->diffForHumans($recruit->finished_at, true) }}.
+                    {{ $recruit->units }} {{ $recruit->unit->name() }} | Temps requis : {{ $recruit->requireTime() }} | Temps restant : <span class="timespan-{{$index}}"></span>
                 </div>
+                <script>
+                    var endTime = new Date('{{$recruit->finished_at->format('Y/m/d h:i:s')}}');
+                    $('.timespan-{{$index}}').countdown(endTime, function (e) {
+                        $(this).text(e.strftime('%D %H:%M:%S'));
+                    });
+                    $('.timespan-{{$index}}').countdown(endTime).on('finish.countdown', function () {
+                        $(this).parent('.recruit').remove();
+                    });
+                </script>
 
             @endforeach
         </div>
@@ -27,7 +37,7 @@
     <div class="units">
         @foreach($units as $unit)
             <div class="unit">
-                <div class="name">{{ $unit->name }}</div>
+                <div class="name">{{ $unit->name() }}</div>
                 @if( $unit->endurance != 0 && $unit->strength != 0 && $unit->agility != 0 )
                     <div class="statistics">
                         <div class="endurance"><span class="icon-endurance"></span> {{ $unit->endurance }}</div>

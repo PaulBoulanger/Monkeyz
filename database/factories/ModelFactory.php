@@ -21,16 +21,6 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
     ];
 });
 
-$factory->define(App\Unit::class, function (Faker\Generator $faker) {
-    return [
-        'name' => $faker->firstName(),
-        'time' => rand(20, 600),
-        'bananas' => rand(20, 10000),
-        'endurance' => rand(10, 50),
-        'strength' => rand(10, 50),
-        'agility' => rand(10, 50),
-    ];
-});
 
 $factory->define(App\Building::class, function (Faker\Generator $faker) {
     return [

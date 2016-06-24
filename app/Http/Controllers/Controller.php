@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use View;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Unit_user;
 use App\Recruit_user;
-use Illuminate\Foundation\Auth\User;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -24,13 +22,28 @@ class Controller extends BaseController
 
         Carbon::setLocale(env('LOCALE', 'en'));
 
-        View::composer('partials.info', function ($view) {
+        if (Auth::check()) {
             $user = Auth::user();
-            $peons = Unit_user::where(['unit_id' => 1, 'user_id' => $user->id])->first()->units;
-            $view->with(compact('user', 'peons'));
-        });
+            View::composer('partials.info', function ($view) {
+                $user = Auth::user();
+                if ($peons = Unit_user::where(['unit_id' => 1, 'user_id' => $user->id])->first())
+                    $peons = $peons->units;
+                else
+                    $peons = 0;
 
+                $view->with(compact('user', 'peons'));
+            });
 
+            $now = Carbon::now();
+            $lastIncome = $user->lastIncome;
+            $hours = $now->diffInHours($lastIncome);
+            if ($hours >= 1) {
+                $user->lastIncome = $lastIncome->addHour($hours);
+                $user->bananas += round($user->field->fields / 10) * $hours;
+                $user->touch();
+            }
+
+        }
         foreach (Recruit_user::all() as $recruit) {
             if (Carbon::now() >= $recruit->finished_at) {
                 $newUnit = Unit_user::firstOrCreate([
@@ -43,5 +56,6 @@ class Controller extends BaseController
                 $recruit->delete();
             }
         }
+
     }
 }
