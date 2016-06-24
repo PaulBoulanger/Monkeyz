@@ -10,4 +10,9 @@ class Building extends Model
     {
         return $this->belongsToMany('App\User');
     }
+
+    public function units()
+    {
+        return $this->belongsToMany('App\Unit');
+    }
 }

@@ -61,7 +61,17 @@
 
                         </div>
                     </form>
-                    @endcan
+                    @else
+                        Il vous manque les bâtiments suivant :
+                        @if($unit->buildings)
+                            <ul>
+                            @foreach($unit->buildings as $building)
+                                <li>{{ $building->name }}</li>
+                            @endforeach
+                            </ul>
+                        @endif
+
+                        @endcan
                 </div>
 
             </div>

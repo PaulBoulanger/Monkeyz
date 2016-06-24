@@ -57,6 +57,16 @@ class CreateUnitsTable extends Migration
             $table->foreign('unit_id')->references('id')->on('units')->onDelete('SET NULL');
             $table->timestamps();
         });
+
+        Schema::create('building_unit', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+            $table->increments('id');
+            $table->unsignedInteger('unit_id')->nullable();
+            $table->unsignedInteger('building_id')->nullable();
+            $table->foreign('unit_id')->references('id')->on('units')->onDelete('SET NULL');
+            $table->foreign('building_id')->references('id')->on('buildings')->onDelete('SET NULL');
+            $table->timestamps();
+        });
     }
 
     /**
@@ -66,6 +76,7 @@ class CreateUnitsTable extends Migration
      */
     public function down()
     {
+        Schema::drop('building_unit');
         Schema::drop('unit_names');
         Schema::drop('recruit_user');
         Schema::drop('unit_user');

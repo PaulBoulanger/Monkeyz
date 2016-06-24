@@ -24,4 +24,9 @@ class Unit extends Model
                 return $name->name;
         }
     }
+
+    public function buildings()
+    {
+        return $this->belongsToMany('App\Building');
+    }
 }
