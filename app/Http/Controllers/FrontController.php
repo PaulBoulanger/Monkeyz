@@ -17,6 +17,8 @@ use Illuminate\Support\Facades\Auth;
 
 class FrontController extends Controller
 {
+
+
     public function home()
     {
         $user = Auth::user();
@@ -76,11 +78,13 @@ class FrontController extends Controller
 
     public function builder()
     {
+        $user = Auth::user();
         return view('front.builder');
     }
 
     public function research()
     {
+        $user = Auth::user();
         return view('front.research');
     }
 
@@ -116,12 +120,14 @@ class FrontController extends Controller
 
     public function field()
     {
+        $user = Auth::user();
         return view('front.field');
     }
 
     public function map()
     {
-        $bases = Base::all();
+        $user = Auth::user();
+        $bases = Base::where('user_id', '!=', $user->id)->get();
 
         return view('front.map', compact('bases'));
     }
@@ -148,6 +154,7 @@ class FrontController extends Controller
 
     public function help()
     {
+        $user = Auth::user();
         return view('front.help');
     }
 }

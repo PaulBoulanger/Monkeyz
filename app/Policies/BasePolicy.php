@@ -4,14 +4,23 @@ namespace App\Policies;
 
 use App\Base;
 use App\User;
+use App\Unit_user;
 
 class BasePolicy
 {
 
     public function loot(User $user, Base $base)
     {
-        if ($base->user_id === $user->id)
+
+        $myArmy = Unit_user::where('user_id', $user->id)->get();
+        $ennemyArmy = Unit_user::where('user_id', $base->user->id)->get();
+
+        if (count($myArmy) <= 0)
             return false;
+
+        if (count($ennemyArmy) <= 0)
+            return false;
+
 
         return true;
     }

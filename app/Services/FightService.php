@@ -40,14 +40,18 @@ class FightService
 
                 if ($myHP <= 0) {
                     $fight = false;
+                    $dead = 100 - (($ennemyHP * 100) / ($ennemyEndurance * 10));
+                    FightService::loose($myArmy, $dead, $ennemyArmy);
 
-                    return back()->with('success', 'Vous avez perdu');
+                    return back()->with('success', 'Vous avez perdu toute votre armée. GGWP');
                 }
 
                 if ($ennemyHP <= 0) {
                     $fight = false;
+                    $dead = 100 - (($myHP * 100) / ($myEndurance * 10));
+                    FightService::win($myArmy, $dead, $ennemyArmy);
 
-                    return back()->with('success', 'Vous avez gagnez');
+                    return back()->with('success', 'Vous avez gagnez la bataille, mais vous avez perdu ' . $dead . '% de votre armée.');
                 }
 
             }
@@ -60,18 +64,55 @@ class FightService
 
                 if ($myHP <= 0) {
                     $fight = false;
+                    $dead = 100 - (($ennemyHP * 100) / ($ennemyEndurance * 10));
+                    FightService::loose($myArmy, $dead, $ennemyArmy);
 
-                    return back()->with('success', 'Vous avez perdu');
+                    return back()->with('success', 'Vous avez perdu toute votre armée. GGWP');
                 }
 
                 if ($ennemyHP <= 0) {
                     $fight = false;
+                    $dead = 100 - (($myHP * 100) / ($myEndurance * 10));
+                    FightService::win($myArmy, $dead, $ennemyArmy);
 
-                    return back()->with('success', 'Vous avez gagnez');
+                    return back()->with('success', 'Vous avez gagnez la bataille, mais vous avez perdu ' . $dead . '% de votre armée.');
                 }
 
             }
         }
     }
+
+    private static function win($myArmy, $dead, $ennemyArmy)
+    {
+        if ($dead > 0) {
+            foreach ($myArmy as $unit) {
+                if ($unit->unit->type != 'peon')
+                    $unit->units = $unit->units - ($unit->units * ($dead / 100));
+                $unit->touch();
+            }
+        }
+
+        foreach ($ennemyArmy as $unit) {
+            if ($unit->unit->type != 'peon')
+                $unit->delete();
+        }
+    }
+
+    private static function loose($myArmy, $dead, $ennemyArmy)
+    {
+        foreach ($myArmy as $unit) {
+            if ($unit->unit->type != 'peon')
+                $unit->delete();
+        }
+
+        if ($dead > 0) {
+            foreach ($ennemyArmy as $unit) {
+                if ($unit->unit->type != 'peon')
+                    $unit->units = $unit->units - ($unit->units * ($dead / 100));
+                $unit->touch();
+            }
+        }
+    }
+
 
 }

@@ -18,6 +18,7 @@
             <div class="base">
                 <div class="user">Ce bananier appartient au joueur : {{ $base->user->name }}</div>
                 <div class="position">coordonnées : {{ $base->position_x }} en X et {{ $base->position_y }} en Y.</div>
+                <div class="power">Ce bananier à une puissance de {{ $base->strength() }}.</div>
                 @can('loot', $base)
                 <form action="{{ action('FrontController@loot', $base) }}" method="post">
                     {{ csrf_field() }}
