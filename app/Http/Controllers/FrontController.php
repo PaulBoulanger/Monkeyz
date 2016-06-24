@@ -135,19 +135,9 @@ class FrontController extends Controller
     public function loot(Base $base)
     {
         $user = Auth::user();
-        $ennemy = $base->user;
+        $enemy = $base->user;
 
-        $myArmy = Unit_user::where('user_id', $user->id)->get();
-        $ennemyArmy = Unit_user::where('user_id', $ennemy->id)->get();
-
-
-        if (count($ennemyArmy) <= 0)
-            return back()->with('error', "Une erreur s'est produite, votre ennemie n'a pas d'armée !");
-
-        if (count($myArmy) <= 0)
-            return back()->with('error', "Une erreur s'est produite, vous n'avez pas d'armée !");
-
-        return FightService::fight($myArmy, $ennemyArmy);
+        return FightService::fight($user, $enemy);
 
         return back()->with('success', 'Vous lancer votre armée sur le bananier de ' . $base->user->name . ' et tentez de le piller !');
     }

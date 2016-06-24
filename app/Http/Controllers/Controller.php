@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use View;
-use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
+use App\Unit;
 use App\Unit_user;
+use Carbon\Carbon;
 use App\Recruit_user;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -36,7 +37,25 @@ class Controller extends BaseController
                 $view->with(compact('user', 'peons'));
             });
 
+
+            $recruit = Recruit_user::where('user_id', $user->id)->first();
+            if ($recruit) {
+                $remaining = Carbon::now()->diffInSeconds($recruit->finished_at);
+                $number = floor($recruit->units - $remaining / Unit::where('id', $recruit->unit_id)->first()->time);
+                $newUnit = Unit_user::firstOrCreate([
+                    'unit_id' => $recruit->unit_id,
+                    'user_id' => $recruit->user_id,
+                ]);
+
+                $newUnit->units = $newUnit->units + $number;
+                $newUnit->touch();
+
+                $recruit->units = $recruit->units - $number;
+                $recruit->touch();
+            }
+
             foreach (Recruit_user::where('user_id', $user->id)->get() as $recruit) {
+
                 if (Carbon::now() >= $recruit->finished_at) {
                     $newUnit = Unit_user::firstOrCreate([
                         'unit_id' => $recruit->unit_id,
