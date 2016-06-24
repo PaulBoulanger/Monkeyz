@@ -65,9 +65,11 @@
                         Il vous manque les bâtiments suivant :
                         @if($unit->buildings)
                             <ul>
-                            @foreach($unit->buildings as $building)
-                                <li>{{ $building->name }}</li>
-                            @endforeach
+                                @foreach($unit->buildings as $building)
+                                    @if(!$building->userHasBuilding())
+                                        <li>{{ $building->name }}</li>
+                                    @endif
+                                @endforeach
                             </ul>
                         @endif
 
