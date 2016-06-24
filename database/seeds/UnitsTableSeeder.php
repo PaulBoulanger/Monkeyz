@@ -27,7 +27,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 5,
             'strength' => 5,
             'agility' => 7,
-        ]);
+        ])->buildings()->attach(['1', '2']);
 
         App\Unit::create([
             'type' => 'speed',
@@ -36,7 +36,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 6,
             'strength' => 6,
             'agility' => 10,
-        ]);
+        ])->buildings()->attach(['3']);
 
         App\Unit::create([
             'type' => 'warrior',
@@ -45,7 +45,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 9,
             'strength' => 9,
             'agility' => 9,
-        ]);
+        ])->buildings()->attach(['4']);
 
         App\Unit::create([
             'type' => 'warrior',
@@ -54,7 +54,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 15,
             'strength' => 10,
             'agility' => 10,
-        ]);
+        ])->buildings()->attach(['4', '5']);
 
         App\Unit::create([
             'type' => 'warrior',
@@ -63,7 +63,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 20,
             'strength' => 12,
             'agility' => 12,
-        ]);
+        ])->buildings()->attach(['4', '5', '6']);
 
         App\Unit::create([
             'type' => 'master',
@@ -72,7 +72,7 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 25,
             'strength' => 25,
             'agility' => 25,
-        ]);
+        ])->buildings()->attach(['1', '2', '3', '4', '5', '6', '7']);
 
         App\Unit::create([
             'type' => 'speed',
@@ -81,6 +81,6 @@ class UnitsTableSeeder extends Seeder
             'endurance' => 8,
             'strength' => 5,
             'agility' => 20,
-        ]);
+        ])->buildings()->attach(['7']);
     }
 }
