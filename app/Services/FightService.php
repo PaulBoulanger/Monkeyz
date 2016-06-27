@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Unit;
-use App\User;
 use App\Unit_user;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,6 +13,9 @@ class FightService
     {
         $myArmy = Unit_user::where('user_id', $user->id)->get();
         $enemyArmy = Unit_user::where('user_id', $enemy->id)->get();
+
+        $bananas = $enemy->bananas / 2;
+        $field = $enemy->field->fields / 2;
 
         $myEndurance = 0;
         $myStrength = 0;
@@ -50,15 +52,17 @@ class FightService
                     $fight = false;
                     $dead = 100 - (($ennemyHP * 100) / ($ennemyEndurance * 10));
                     FightService::loose($myArmy, $dead, $enemyArmy);
+                    MessageService::sendMessage($user, $enemy, $bananas, $field, $dead, 'loose');
 
                     return back()->with('success', 'Vous avez perdu toute votre armée. GGWP');
                 }
 
                 if ($ennemyHP <= 0) {
                     $fight = false;
-                    $dead = 100 - (($myHP * 100) / ($myEndurance * 10));
+                    $dead = round(100 - (($myHP * 100) / ($myEndurance * 10)));
                     FightService::win($myArmy, $dead, $enemyArmy);
-                    FightService::loot($enemy);
+                    FightService::loot($enemy, $bananas, $field);
+                    MessageService::sendMessage($user, $enemy, $bananas, $field, $dead, 'win');
 
                     return back()->with('success', 'Vous avez gagnez la bataille, mais vous avez perdu ' . $dead . '% de votre armée.');
                 }
@@ -75,6 +79,7 @@ class FightService
                     $fight = false;
                     $dead = round(100 - (($ennemyHP * 100) / ($ennemyEndurance * 10)));
                     FightService::loose($myArmy, $dead, $enemyArmy);
+                    MessageService::sendMessage($user, $enemy, $bananas, $field, $dead, 'loose');
 
                     return back()->with('success', 'Vous avez perdu toute votre armée. GGWP');
                 }
@@ -83,7 +88,8 @@ class FightService
                     $fight = false;
                     $dead = round(100 - (($myHP * 100) / ($myEndurance * 10)));
                     FightService::win($myArmy, $dead, $enemyArmy);
-                    FightService::loot($enemy);
+                    FightService::loot($enemy, $bananas, $field);
+                    MessageService::sendMessage($user, $enemy, $bananas, $field, $dead, 'win');
 
                     return back()->with('success', 'Vous avez gagnez la bataille, mais vous avez perdu ' . $dead . '% de votre armée.');
                 }
@@ -98,26 +104,9 @@ class FightService
             foreach ($myArmy as $unit) {
                 if ($unit->unit->type != 'peon') {
                     $unit->units = $unit->units - ($unit->units * ($dead / 100));
-                    if ($unit->unit->upgrade) {
-
-                        $units = $unit->units;
-                        $type = $unit->unit->type;
-                        $level = $unit->unit->level;
-                        $user_id = $unit->user_id;
-
-                        $upgradeUnit = Unit::where(['type' => $type, 'level' => $level + 1])->first();
-
-                        $unit->delete();
-                        $unit = Unit_user::firstOrCreate([
-                            'unit_id' => $upgradeUnit->id,
-                            'user_id' => $user_id,
-                        ]);
-                        $unit->units = $units;
-                        $unit->user_id = $user_id;
-                        $unit->touch();
-                    }
+                    $unit->touch();
+                    FightService::upgrade($unit);
                 }
-                $unit->touch();
             }
         }
 
@@ -136,27 +125,49 @@ class FightService
 
         if ($dead > 0) {
             foreach ($enemyArmy as $unit) {
-                if ($unit->unit->type != 'peon')
+                if ($unit->unit->type != 'peon') {
                     $unit->units = $unit->units - ($unit->units * ($dead / 100));
-                $unit->touch();
+                    $unit->touch();
+                    FightService::upgrade($unit);
+                }
             }
         }
     }
 
-    private static function loot($enemy)
+    private static function loot($enemy, $bananas, $field)
     {
-        $field = $enemy->field->fields;
-        $bananas = $enemy->bananas;
-
-        $enemy->field->fields -= ($field / 2);
+        $enemy->field->fields -= $field;
         $enemy->field->touch();
-        $enemy->bananas -= ($bananas / 2);
+        $enemy->bananas -= $bananas;
         $enemy->touch();
 
-        Auth::user()->field->fields += ($field / 2);
+        Auth::user()->field->fields += $field;
         Auth::user()->field->touch();
-        Auth::user()->bananas += ($bananas / 2);
+        Auth::user()->bananas += $bananas;
         Auth::user()->touch();
+
+    }
+
+    private static function upgrade($unit)
+    {
+        if ($unit->unit->upgrade) {
+            $units = $unit->units;
+            $type = $unit->unit->type;
+            $level = $unit->unit->level;
+            $user_id = $unit->user_id;
+
+            $upgradeUnit = Unit::where(['type' => $type, 'level' => $level + 1])->first();
+
+            $unit->delete();
+            $unit = Unit_user::firstOrCreate([
+                'unit_id' => $upgradeUnit->id,
+                'user_id' => $user_id,
+            ]);
+            $unit->units = $units;
+            $unit->user_id = $user_id;
+            $unit->touch();
+        }
+
     }
 
 

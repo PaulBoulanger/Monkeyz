@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use View;
 use App\Unit_user;
 use Carbon\Carbon;
@@ -32,12 +33,13 @@ class Controller extends BaseController
 
             View::composer('*', function ($view) {
                 $user = Auth::user();
+                $countMessages = Message::where(['user_id' => $user->id, 'read' => 0])->get()->count();
                 if ($peons = Unit_user::where(['unit_id' => 1, 'user_id' => $user->id])->first())
                     $peons = $peons->units;
                 else
                     $peons = 0;
 
-                $view->with(compact('user', 'peons'));
+                $view->with(compact('user', 'peons', 'countMessages'));
             });
         }
     }

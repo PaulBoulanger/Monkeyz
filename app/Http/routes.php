@@ -19,4 +19,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::get('construction', 'FrontController@builder');
     Route::post('construction/{builder}', 'FrontController@built');
+
+    Route::get('messages', 'FrontController@messages');
+    Route::get('message/{message}', 'FrontController@message');
 });

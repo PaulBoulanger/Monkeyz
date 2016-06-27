@@ -7,4 +7,6 @@ return [
     'woods' => 'bois|bois',
     'minutes' => 'minute|minutes',
 
+    'newMsg' => 'nouveau message|nouveaux messages',
+
 ];

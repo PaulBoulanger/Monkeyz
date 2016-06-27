@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Message;
 use App\Services\RecruitService;
 use Gate;
 use App\Base;
@@ -128,12 +129,28 @@ class FrontController extends Controller
 
         return FightService::fight($user, $enemy);
 
-        return back()->with('success', 'Vous lancer votre armée sur le bananier de ' . $base->user->name . ' et tentez de le piller !');
+        //return back()->with('success', 'Vous lancer votre armée sur le bananier de ' . $base->user->name . ' et tentez de le piller !');
     }
 
     public function help()
     {
         $user = Auth::user();
         return view('front.help');
+    }
+
+    public function messages()
+    {
+        $user = Auth::user();
+        $messages = Message::where('user_id', $user->id)->get();
+
+        return view('front.messages', compact('messages'));
+    }
+
+    public function message(Message $message)
+    {
+        $message->read = 1;
+        $message->touch();
+
+        return view('front.message', compact('message'));
     }
 }
