@@ -4,9 +4,9 @@
             <li><a href="{{ action('FrontController@home') }}">Bananier</a></li>
             <li><a href="{{ action('FrontController@units') }}">Mon armée</a></li>
             <li><a href="{{ action('FrontController@recruits') }}">Recrutements</a></li>
-            <li><a href="#">Constructions</a></li>
+            <li><a href="{{ action('FrontController@builder') }}">Constructions</a></li>
             <li><a href="#">Technologies</a></li>
-            <li><a href="{{ action('FrontController@resources') }}">Récolte de bananes</a></li>
+            <li><a href="{{ action('FrontController@resources') }}">Récolte</a></li>
             <li><a href="#">Terrain</a></li>
             <li><a href="{{ action('FrontController@map') }}">Jungle</a></li>
             <li><a href="#">Aide</a></li>

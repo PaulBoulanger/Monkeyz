@@ -17,7 +17,9 @@ class CreateBuildingsTable extends Migration
             $table->increments('id');
             $table->string('name');
             $table->integer('time');
-            $table->integer('bananas');
+            $table->integer('wood');
+            $table->string('type');
+            $table->integer('level');
             $table->string('image');
             $table->timestamps();
         });
@@ -27,8 +29,7 @@ class CreateBuildingsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('building_id')->nullable();
             $table->unsignedInteger('user_id')->nullable();
-            $table->timestamp('launched_at');
-            $table->timestamp('finished_at');
+            $table->timestamp('finished_at')->useCurrent();
             $table->boolean('built')->default(0);
             $table->foreign('building_id')->references('id')->on('buildings')->onDelete('SET NULL');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');

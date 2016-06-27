@@ -3,7 +3,7 @@
 
 Route::auth();
 
-Route::group(['middleware' => 'auth'], function() {
+Route::group(['middleware' => 'auth'], function () {
     Route::get('/', 'FrontController@home');
 
     Route::get('maison-des-primates', 'FrontController@units');
@@ -16,4 +16,7 @@ Route::group(['middleware' => 'auth'], function() {
 
     Route::get('la-jungle', 'FrontController@map');
     Route::post('la-jungle/{base}', 'FrontController@loot');
+
+    Route::get('construction', 'FrontController@builder');
+    Route::post('construction/{builder}', 'FrontController@built');
 });

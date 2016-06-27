@@ -12,11 +12,16 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         App\User::create([
-            'name' => 'Desquirez Sébastien',
+            'name' => 'Niir',
             'email' => 'sebdesquirez@gmail.com',
             'password' => \Illuminate\Support\Facades\Hash::make('passpass'),
-        ]);
+        ])->buildings()->attach(['1']);
 
-        factory(App\User::class, 50)->create();
+        App\User::create([
+            'name' => 'Monkey',
+            'email' => 'monkey@sebdsz.fr',
+            'password' => \Illuminate\Support\Facades\Hash::make('passpass'),
+        ])->buildings()->attach(['1']);
+
     }
 }

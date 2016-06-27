@@ -16,11 +16,13 @@ class CreateUnitsTable extends Migration
             $table->engine = 'InnoDB';
             $table->increments('id');
             $table->string('type');
+            $table->integer('level');
             $table->integer('time');
             $table->integer('bananas');
             $table->integer('endurance');
             $table->integer('strength');
             $table->integer('agility');
+            $table->boolean('upgrade');
             $table->string('image')->nullable();
             $table->timestamps();
         });

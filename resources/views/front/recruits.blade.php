@@ -48,7 +48,7 @@
                 @endif
                 <div class="image">{{ $unit->image }}</div>
                 <div class="resources">
-                    <div class="time"><span class="icon-time">{{ $unit->time }} sec</div>
+                    <div class="time"><span class="icon-time">{{ $unit->time }}</div>
                     <div class="bananas"><span class="icon-bananas"> {{ $unit->bananas }}</div>
                     @can('recruit', $unit)
                     <form action="" method="post">

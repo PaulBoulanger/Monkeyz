@@ -36,7 +36,7 @@ class User extends Authenticatable
 
     public function resource()
     {
-        return $this->belongsTo('App\Resource');
+        return $this->hasOne('App\Resource');
     }
 
     public function buildings()
@@ -49,14 +49,19 @@ class User extends Authenticatable
         return $this->hasOne('App\Field');
     }
 
-    public function lastIncome()
+    public function nextIncome()
     {
         return $this->lastIncome->addHour(1);
     }
 
-    public function income()
+    public function incomeBanana()
     {
-        return round($this->field->units / 5);
+        return round($this->field->units_banana / 2);
+    }
+
+    public function incomeWood()
+    {
+        return round($this->field->units_wood / 2);
     }
 
     public function getIncome()
@@ -67,7 +72,8 @@ class User extends Authenticatable
 
         if ($hours >= 1) {
             $this->lastIncome = $lastIncome->addHour($hours);
-            $this->bananas += $this->income() * $hours;
+            $this->bananas += $this->incomeBanana() * $hours;
+            $this->wood += $this->incomeWood() * $hours;
             $this->touch();
         }
     }

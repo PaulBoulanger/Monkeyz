@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Field;
+use App\Services\RecruitService;
 use Gate;
 use App\Base;
 use App\Unit;
-use App\User;
+use App\Field;
+use App\Building;
 use Carbon\Carbon;
 use App\Unit_user;
 use App\Recruit_user;
+use App\Building_user;
 use App\Http\Requests;
 use Illuminate\Http\Request;
 use App\Services\FightService;
+use App\Services\ConstructService;
 use Illuminate\Support\Facades\Auth;
 
 class FrontController extends Controller
@@ -46,40 +49,23 @@ class FrontController extends Controller
 
     public function addRecruits(Requests\RecruitRequest $request)
     {
-        $user = Auth::user();
-        $number = $request->get('number');
-        $unit = Unit::find($request->get('unit'));
-
-        $resource = $unit->bananas * $number;
-
-        if ($user->bananas < $resource)
-            return back()->with('error', 'Vous n\'avez pas assez de bananes pour cet entraînement !');
-
-        $lastRecruit = Recruit_user::where('user_id', $user->id)->orderBy('finished_at', 'DESC')->first();
-
-        if ($lastRecruit)
-            $finishedAt = $lastRecruit->finished_at;
-        else
-            $finishedAt = Carbon::now();
-
-        $time = $unit->time * $number;
-        Recruit_user::create([
-            'user_id' => $user->id,
-            'unit_id' => $unit->id,
-            'units' => $number,
-            'finished_at' => $finishedAt->addSeconds($time),
-        ]);
-
-        $user->bananas = $user->bananas - $resource;
-        $user->touch();
-
-        return back()->with('success', 'Vos nouvelles recrut sont en cours d\'entraînement...');
+        return RecruitService::addRecruits($request);
     }
 
     public function builder()
     {
+
         $user = Auth::user();
-        return view('front.builder');
+        $buildings = Building::all();
+        $user_building = $user->buildings();
+        $builts = $user->buildings()->where('built', 0)->get();
+
+        return view('front.builder', compact('user', 'buildings', 'user_building', 'builts'));
+    }
+
+    public function built($id)
+    {
+        return ConstructService::built($id);
     }
 
     public function research()
@@ -96,7 +82,7 @@ class FrontController extends Controller
         return view('front.resources', compact('fields', 'user'));
     }
 
-    public function setResources(Request $request)
+    public function setResources(Requests\FieldRequest $request)
     {
         $user = Auth::user();
         $peon = Unit_user::where(['user_id' => $user->id, 'unit_id' => 1])->first();
@@ -104,14 +90,17 @@ class FrontController extends Controller
         $peon = $peon ? $peon->units : 0;
 
         $fields = Field::where('user_id', $user->id)->first();
+        $units_banana = $request->get('units_banana');
+        $units_wood = $request->get('units_wood');
 
-        if ($request->get('units') > $peon)
+        if (($units_banana + $units_wood) > $peon)
             return back()->with('error', 'Vous n\'avez pas autant d\'ouvrier dans votre armée !');
 
-        if ($request->get('units') > $fields->fields)
+        if (($units_banana + $units_wood) > $fields->fields)
             return back()->with('error', 'Vous ne pouvez pas avoir plus d\'ouvrier que de km² de territoire !');
 
-        $fields->units = $request->get('units');
+        $fields->units_banana = $units_banana;
+        $fields->units_wood = $units_wood;
         $fields->touch();
 
         return back()->with('success', 'Vos ouvriers ont été réattribué à la tache !');

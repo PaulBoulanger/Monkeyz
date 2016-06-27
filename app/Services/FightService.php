@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Unit;
 use App\User;
 use App\Unit_user;
 use Illuminate\Support\Facades\Auth;
@@ -72,7 +73,7 @@ class FightService
 
                 if ($myHP <= 0) {
                     $fight = false;
-                    $dead = 100 - (($ennemyHP * 100) / ($ennemyEndurance * 10));
+                    $dead = round(100 - (($ennemyHP * 100) / ($ennemyEndurance * 10)));
                     FightService::loose($myArmy, $dead, $enemyArmy);
 
                     return back()->with('success', 'Vous avez perdu toute votre armée. GGWP');
@@ -80,7 +81,7 @@ class FightService
 
                 if ($ennemyHP <= 0) {
                     $fight = false;
-                    $dead = 100 - (($myHP * 100) / ($myEndurance * 10));
+                    $dead = round(100 - (($myHP * 100) / ($myEndurance * 10)));
                     FightService::win($myArmy, $dead, $enemyArmy);
                     FightService::loot($enemy);
 
@@ -95,8 +96,27 @@ class FightService
     {
         if ($dead > 0) {
             foreach ($myArmy as $unit) {
-                if ($unit->unit->type != 'peon')
+                if ($unit->unit->type != 'peon') {
                     $unit->units = $unit->units - ($unit->units * ($dead / 100));
+                    if ($unit->unit->upgrade) {
+
+                        $units = $unit->units;
+                        $type = $unit->unit->type;
+                        $level = $unit->unit->level;
+                        $user_id = $unit->user_id;
+
+                        $upgradeUnit = Unit::where(['type' => $type, 'level' => $level + 1])->first();
+
+                        $unit->delete();
+                        $unit = Unit_user::firstOrCreate([
+                            'unit_id' => $upgradeUnit->id,
+                            'user_id' => $user_id,
+                        ]);
+                        $unit->units = $units;
+                        $unit->user_id = $user_id;
+                        $unit->touch();
+                    }
+                }
                 $unit->touch();
             }
         }

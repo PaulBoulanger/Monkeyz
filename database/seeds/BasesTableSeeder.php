@@ -11,7 +11,7 @@ class BasesTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i < 50; $i++) {
+        for ($i = 1; $i <= 2; $i++) {
             App\Base::create([
                 'user_id' => $i,
                 'position_x' => rand(1, 100),

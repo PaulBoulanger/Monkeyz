@@ -11,11 +11,9 @@ class FieldsTableSeeder extends Seeder
      */
     public function run()
     {
-        for ($i = 1; $i < 50; $i++) {
+        for ($i = 1; $i <= 2; $i++) {
             App\Field::create([
                 'user_id' => $i,
-                'fields' => 50,
-                'units' => 0,
             ]);
         }
     }

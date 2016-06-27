@@ -29,7 +29,6 @@ class CreateTechnologiesTable extends Migration
             $table->unsignedInteger('user_id')->nullable();
             $table->timestamp('launched_at');
             $table->timestamp('finished_at');
-            $table->boolean('built')->default(0);
             $table->foreign('technology_id')->references('id')->on('technologies')->onDelete('SET NULL');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('SET NULL');
             $table->timestamps();

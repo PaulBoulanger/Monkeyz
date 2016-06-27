@@ -7,6 +7,11 @@ use Illuminate\Support\Facades\Auth;
 
 class Building extends Model
 {
+
+    protected $dates = [
+        'finished_at',
+    ];
+
     public function users()
     {
         return $this->belongsToMany('App\User');
@@ -28,4 +33,18 @@ class Building extends Model
         return false;
 
     }
+
+    public function requireTime()
+    {
+        $minute = round($this->time / 60);
+        return $minute . ' ' . trans_choice('site.minutes', $minute);
+    }
+
+    public function timeFinished(User $user)
+    {
+        $building_user = Building_user::where(['user_id' => $user->id, 'building_id' => $this->id])->first();
+
+        return $building_user->finished_at->format('m/d/Y H:i:s');
+    }
+
 }

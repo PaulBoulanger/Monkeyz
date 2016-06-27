@@ -34,7 +34,7 @@ class Unit extends Model
     {
         $buildings = count($this->buildings);
         foreach ($this->buildings as $building) {
-            foreach (Auth::user()->buildings as $userBuilding) {
+            foreach (Auth::user()->buildings()->where('built', 1)->get() as $userBuilding) {
                 if ($userBuilding->id === $building->id)
                     $buildings--;
             }
