@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Message;
 use View;
+use App\Fight;
+use App\Message;
+use App\Services\FightService;
 use App\Unit_user;
 use Carbon\Carbon;
 use App\Services\ConstructService;
@@ -30,6 +32,7 @@ class Controller extends BaseController
 
             RecruitService::recruting($user);
             ConstructService::building($user);
+            FightService::checkFight($user);
 
             View::composer('*', function ($view) {
                 $user = Auth::user();

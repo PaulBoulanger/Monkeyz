@@ -21,7 +21,6 @@ class UnitNameTableSeeder extends Seeder
             'name' => 'Singe éclaireurs',
         ]);
 
-
         App\Unit_name::create([
             'unit_id' => 3,
             'name' => 'Singe chauve-souris',
@@ -29,28 +28,29 @@ class UnitNameTableSeeder extends Seeder
 
         App\Unit_name::create([
             'unit_id' => 4,
-            'name' => 'Guerrier singe',
+            'name' => 'Singe transporteur',
         ]);
 
         App\Unit_name::create([
             'unit_id' => 5,
-            'name' => 'Guerrier singe avec bouclier',
+            'name' => 'Guerrier singe',
         ]);
 
         App\Unit_name::create([
             'unit_id' => 6,
-            'name' => 'Guerrier singe en armure',
+            'name' => 'Guerrier singe avec bouclier',
         ]);
 
         App\Unit_name::create([
             'unit_id' => 7,
-            'name' => 'Maître singe',
+            'name' => 'Guerrier singe en armure',
         ]);
 
         App\Unit_name::create([
             'unit_id' => 8,
-            'name' => 'Singe transporteur',
+            'name' => 'Maître singe',
         ]);
+
     }
 }
 

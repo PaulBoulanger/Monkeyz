@@ -49,6 +49,11 @@ class User extends Authenticatable
         return $this->hasOne('App\Field');
     }
 
+    public function base()
+    {
+        return $this->hasOne('App\Base');
+    }
+
     public function nextIncome()
     {
         return $this->lastIncome->addHour(1);

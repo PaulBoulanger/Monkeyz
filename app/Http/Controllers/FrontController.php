@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Fight;
 use App\Message;
 use App\Services\RecruitService;
 use Gate;
@@ -119,7 +120,10 @@ class FrontController extends Controller
         $user = Auth::user();
         $bases = Base::where('user_id', '!=', $user->id)->get();
 
-        return view('front.map', compact('bases'));
+        $fight = Fight::where('user_id', $user->id)->first();
+        $fight = $fight ? $fight : null;
+
+        return view('front.map', compact('bases', 'fight'));
     }
 
     public function loot(Base $base)
@@ -127,7 +131,7 @@ class FrontController extends Controller
         $user = Auth::user();
         $enemy = $base->user;
 
-        return FightService::fight($user, $enemy);
+        return FightService::go($user, $enemy);
 
         //return back()->with('success', 'Vous lancer votre armée sur le bananier de ' . $base->user->name . ' et tentez de le piller !');
     }

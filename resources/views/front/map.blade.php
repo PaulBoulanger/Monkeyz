@@ -14,6 +14,23 @@
 
     <div class="bases">
 
+        @if($fight)
+            <div class="fight">
+                <p>Il reste <span class="timespan"></span> secondes avant la bataille contre {{ $fight->enemy() }} !
+                </p>
+                <script>
+
+                    var endTime = new Date('{{$fight->timeFinished()}}');
+                    $('.timespan').countdown(endTime, function (e) {
+                        $(this).text(e.strftime('%D %H:%M:%S'));
+                    });
+                    $('.timespan').countdown(endTime).on('finish.countdown', function () {
+                        location.reload();
+                    });
+                </script>
+            </div>
+        @endif
+
         @foreach($bases as $base)
             <div class="base">
                 <div class="user">Ce bananier appartient au joueur : {{ $base->user->name }}</div>
